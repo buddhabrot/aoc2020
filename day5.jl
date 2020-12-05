@@ -11,11 +11,12 @@ function to_binary(char)
 end
 
 function getSeat(line)
-    row_code = map(to_binary,line[1:7])
-    col_code = map(to_binary,line[8:10])
+    # Note: Split in row/col is not required but Part 2 of this Day might need it
+    rowCode = map(to_binary,line[1:7])
+    colCode = map(to_binary,line[8:10])
 
-    row = parse(Int, row_code, base=2)
-    col = parse(Int, col_code, base=2)
+    row = parse(Int, rowCode, base=2)
+    col = parse(Int, colCode, base=2)
 
     seat = row * 8 + col
 
