@@ -4,23 +4,16 @@ total = 0
 first = true
 for line in lines
     if length(line) == 0
-         cnt = length(keys(summary))
+         cnt = length(summary)
          global total += cnt
-         global summary = Dict()
          global first = true
          continue
     end
 
     if (first)
-        for char in line
-            summary[char] = true
-        end
+        global summary = Set(line)
     else
-        for char in keys(summary)
-            if !(char in line)
-                delete!(summary, char)
-            end
-        end
+        global summary = intersect(summary, Set(line))
     end
 
     first = false
