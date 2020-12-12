@@ -8,11 +8,11 @@ function doMove(pos, dir, instruction, amount)
     end
 
     if (instruction == "W")
-        return pos .+ (0, -1) .* amount,dir
+        return pos .+ (-1, 0) .* amount,dir
     end
 
     if (instruction == "E")
-        return pos .+ (0, 1) .* amount,dir
+        return pos .+ (1, 0) .* amount,dir
     end
 
     if (instruction == "F")
@@ -99,8 +99,6 @@ function part2()
         if (instruction in ["L", "R"])
             wpos = rot(wpos,instruction,amount)
         end
-
-        #print(join([pos,wpos],","),"\n")
     end
 
     print(abs(pos[1]) + abs(pos[2]))
