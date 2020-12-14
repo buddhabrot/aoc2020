@@ -30,39 +30,6 @@ function pb(bus)
     end
 end
 
-function search(start,diff,multiplier, next, buses)
-    candidate = start
-
-    if (next > length(buses) || buses[next][2] == "x")
-        return true
-    end
-
-    while true
-        nt = buses[next][1]
-        nb = parse(Int, buses[next][2])
-        nd = nt - diff - 1
-
-        print("Trying to find next number ", candidate, " by checking if ", candidate + nd, " divides ", nb, "\n")
-
-        if (candidate > 4000) # early stop
-            return false
-        end
-
-        if mod(nb, candidate + nd) == 0 # possible candidate
-            if search(candidate, buses[next][1] - 1, nb, next + 1, buses[next:end])
-                return true
-            end
-        else
-            candidate += multiplier
-            continue
-        end
-
-      
-    end
-
-    return false
-end
-
 function part2()
     lines = readlines("day13.txt")
     _ = parse(Int, lines[1])
