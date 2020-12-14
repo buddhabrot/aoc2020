@@ -22,7 +22,7 @@ function part1()
     end
 
     return minimumBus * minimum
-en
+end
 
 function part2()
     lines = readlines("day13.txt")
