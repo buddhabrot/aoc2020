@@ -22,13 +22,7 @@ function part1()
     end
 
     return minimumBus * minimum
-end
-
-function pb(bus)
-    if (bus == "x")
-        return 0
-    end
-end
+en
 
 function part2()
     lines = readlines("day13.txt")
