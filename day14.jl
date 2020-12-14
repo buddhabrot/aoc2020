@@ -6,14 +6,6 @@ function getOneMask(mask)
     return parse(Int, join(map(c->if c == '1' return '1' else return '0' end, collect(mask))), base=2)
 end
 
-function getXMask(mask)
-    return map(c->if c == 'X' return '1' else return '0' end, collect(mask))
-end
-
-function getOp(lvalue, rvalue)
-end
-
-
 function part1()
     lines = readlines("day14.txt")
     groups = []
