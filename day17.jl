@@ -3,25 +3,27 @@ cubes = hcat(map(collect,readlines("day17.txt"))...)
 cubes = cat(cubes,dims=ndims(cubes)+1)
 hypercubes = cat(cubes,dims=ndims(cubes)+1)
 
+# Added a part 3 that uses hyper hyper cubes
+hyperhypercubes = hypercubes
+
+for i = 1:200
+    global hyperhypercubes
+    hyperhypercubes = cat(hyperhypercubes,dims=ndims(hyperhypercubes)+1)
+end
+
+print(size(hyperhypercubes))
+
 function step(cubes)
     # Pad the cubes
-    if (ndims(cubes) == 3)
-        (xd,yd,zd) = size(cubes)
-        pad = fill('.',xd+2,yd+2,zd+2)
-        for index in CartesianIndices((1:xd,1:yd,1:zd))
-            pad[index+CartesianIndex(1,1,1)] = cubes[index]
-        end
-        cubeIndices = CartesianIndices((1:xd+2,1:yd+2,1:zd+2))
-        offsets = CartesianIndices((-1:1,-1:1,-1:1))
-    else # ndims = 4
-        (xd,yd,zd,wd) = size(cubes)
-        pad = fill('.',xd+2,yd+2,zd+2,wd+2)
-        for index in CartesianIndices((1:xd,1:yd,1:zd,1:wd))
-            pad[index+CartesianIndex(1,1,1,1)] = cubes[index]
-        end
-        cubeIndices = CartesianIndices((1:xd+2,1:yd+2,1:zd+2,1:wd+2))
-        offsets = CartesianIndices((-1:1,-1:1,-1:1,-1:1))
+    nd = ndims(cubes)
+    pad = fill('.',(size(cubes).+fill(2,nd))...)
+    for index in CartesianIndices(Tuple(size(cubes)))
+        pad[index+CartesianIndex(fill(1,nd)...)] = cubes[index]
     end
+    cubeIndices = CartesianIndices(Tuple(size(cubes).+fill(2,nd)))
+    offsets = map(
+        c->c-CartesianIndex(fill(2,nd)...),
+        CartesianIndices(Tuple(fill(3,nd))))
 
     cubes = pad
     mcubes = copy(cubes)
@@ -77,7 +79,20 @@ function part2()
     print(length(hypercubes[hypercubes.=='#']))
 end
 
+function part3()
+    global hyperhypercubes
+
+    for i = 1:2
+        hyperhypercubes = step(hyperhypercubes)
+    end
+   
+    print(length(hyperhypercubes[hyperhypercubes.=='#']))
+end
 
 part1()
 print("\n")
 part2()
+print("\n")
+#part3()
+print("\n")
+#part2()
