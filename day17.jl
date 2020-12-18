@@ -3,15 +3,7 @@ cubes = hcat(map(collect,readlines("day17.txt"))...)
 cubes = cat(cubes,dims=ndims(cubes)+1)
 hypercubes = cat(cubes,dims=ndims(cubes)+1)
 
-# Added a part 3 that uses hyper hyper cubes
-hyperhypercubes = hypercubes
 
-for i = 1:200
-    global hyperhypercubes
-    hyperhypercubes = cat(hyperhypercubes,dims=ndims(hyperhypercubes)+1)
-end
-
-print(size(hyperhypercubes))
 
 function step(cubes)
     # Pad the cubes
@@ -80,9 +72,16 @@ function part2()
 end
 
 function part3()
-    global hyperhypercubes
+    # Added a part 3 that uses hyper hyper cubes
+    global hypercubes
+    hyperhypercubes = hypercubes
 
-    for i = 1:2
+    for i = 1:200 # 204-dimensional cube
+        global hyperhypercubes
+        hyperhypercubes = cat(hyperhypercubes,dims=ndims(hyperhypercubes)+1)
+    end
+
+    for i = 1:6
         hyperhypercubes = step(hyperhypercubes)
     end
    
@@ -93,6 +92,5 @@ part1()
 print("\n")
 part2()
 print("\n")
-#part3()
+#part3()  #uncomment to calculate part 3 (very heavy, never finishes)
 print("\n")
-#part2()
