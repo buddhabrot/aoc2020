@@ -1,5 +1,5 @@
-function readTiles()
-    input = readlines("day20.txt")
+function readTiles(file)
+    input = readlines(file)
     tid = 0
     tiles = Dict()
     for line in input
@@ -22,7 +22,7 @@ function readTiles()
 end
 
 function sides(tile)
-    return [tile[1,:],tile[end,:],tile[:,1],tile[:,end]]
+    return [tile[1,:],tile[:,1],tile[end,:],tile[:,end]]
 end
 
 function rotations(tile)
@@ -150,7 +150,7 @@ function permute(tiles, tilemap, friends)
 end
 
 function part1()
-    tiles = readTiles() 
+    tiles = readTiles("day20.txt") 
     friends = Dict()
     for tid in keys(tiles)
         for otid in keys(tiles)
@@ -174,21 +174,119 @@ function part1()
     return tilemap
 end
 
-function part2()
-    tiles = readTiles() 
-    tilemap = part1()
-    offsets = [(1,0),(0,1),(-1,0),(0,-1)]
-
-    ops = []
-    for idx in CartesianIndices(tilemap)
-        # Get orientation wrt next neighbour
-        nidx = firstNeighbour(idx, tilemap)
-        ops = [ops; align(tiles[tilemap[idx][1]], tiles[tilemap[nidx][1]])]
+function seamonsters(tilemap)
+    sm = split("                  # ;#    ##    ##    ###; #  #  #  #  #  #   ",';')
+    
+    total = []
+    for i=1:size(tilemap)[1]
+        for j=1:size(tilemap)[2]
+            found = true
+            for p=0:19
+                for k=0:2
+                    if(!checkbounds(Bool, tilemap, j+k, i+p))
+                        found = false
+                        break
+                    end
+                    t = tilemap[j+k, i+p]
+                    if(sm[k+1][p+1] == ' ' || t == '#')
+                        found = found
+                    else
+                        found = false
+                        break
+                    end
+                end
+                if (!found)
+                    break
+                end
+            end
+            if (found)
+                # seamonster found
+                total = [total; (i,j)]
+            end
+        end
     end
 
-    println(length(ops) - length(unique(ops)))
+    return total
 end
 
-#part1()
+function part2()
+    tiles = readTiles("day20.txt") 
+    d = Int(floor(sqrt(length(collect(values(tiles))))))
+    tilemap = part1()
+
+    aligned = fill(fill('.',size(collect(values(tiles))[1])), (d,d))
+
+    for row in 1:d
+        prevtile = tiles[tilemap[row,1][1]]
+        tile = tiles[tilemap[row,2][1]]
+
+        found = false
+
+        for rot1 in rotations(prevtile)
+            for rot2 in rotations(tile)
+                if row > 1
+                    condition = align(aligned[row-1,1],rot1) == (3,1)
+                else
+                    condition = true
+                end
+
+                if(align(rot1,rot2) == (4,2) && condition)
+                    aligned[row,1] = rot1
+                    aligned[row,2] = rot2
+                    prevtile = rot2
+                    found = true
+                    break
+                end
+            end
+
+            if (found)
+                break
+            end
+        end
+
+        if (!found)
+            println("Cannot stitch...", row)
+            return
+        end
+
+
+        for (idx,tile) in enumerate(tilemap[row,3:end])
+            found = false
+
+            for rot in rotations(tiles[tile[1]])
+                if(align(aligned[row,idx+1],rot) == (4,2))
+                    aligned[row,idx+2] = rot
+                    found = true
+                    break
+                end
+            end
+
+            if (!found)
+                println("Cannot stitch...", row, ",", idx+2)
+                return
+            end
+        end
+    end
+
+    rows = []
+    for row = 1:d
+        trimmed = cat(map(a->a[2:end-1,2:end-1],aligned[row,:])...,dims=2)
+        rows = [rows; [trimmed]]
+    end
+
+    trimmed = cat(rows..., dims=1)
+    
+    for rot in rotations(trimmed)
+        sms = seamonsters(rot)
+        total = count(c->c=='#', rot)
+
+        if(length(sms) > 0)
+            println(total-length(sms)*15) # 15 #'s in seamonster pattern
+            return
+        end
+    end
+end
+
+part1()
 print("\n")
 part2()
