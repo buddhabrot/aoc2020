@@ -58,16 +58,16 @@ function part2()
     for i = 1:100
         nblacks = copy(blacks)
         all = collect(Iterators.flatten(map(c->[c;getAdjacent(c)], collect(keys(blacks)))))
-        #println(length(all))
+
         for t in all
             adjs = count(c->haskey(blacks,c), getAdjacent(t))
-            #print(adjs,",")
             if((adjs == 0 || adjs > 2) && haskey(blacks, t)) 
                 nblacks[t] = false
             elseif(adjs == 2 && !haskey(blacks, t)) 
                 nblacks[t] = true
             end
         end
+
         blacks = Dict()
         for a in keys(nblacks)
             if (nblacks[a]) 
@@ -75,6 +75,8 @@ function part2()
             end
         end
     end
+
+    return count(k->blacks[k], keys(blacks))
 end
 
 function getAdjacent(tile)
@@ -83,4 +85,4 @@ end
 
 println(part1())
 println()
-part2()
+println(part2())
